@@ -71,7 +71,6 @@ module.exports = {
 								let foundLocation = _.find(foundLocations, {id: place.id});
 								if(foundLocation){
 									_.assign(place, foundLocation);
-									place.location_exists = true;
 									delete place.reviews;
 								}
 							});

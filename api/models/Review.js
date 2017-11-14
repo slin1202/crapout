@@ -100,7 +100,7 @@ module.exports = {
 				privacy: averagePrivacy,
 				change_table: averageChangeTable,
 				public_space: averagePublic,
-				average_rating: (averageCleanliness + averagePrivacy)/2
+				average_rating: ((averageCleanliness + averagePrivacy)/2).toFixed(1)
 			}).exec((err) => {
 				cb(err);
 			});
