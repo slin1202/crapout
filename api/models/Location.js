@@ -21,6 +21,13 @@ module.exports = {
   		type: 'float',
   		defaultsTo: 0
   	},
+  	amenities: {
+  		type: 'float',
+  		defaultsTo: 0
+  	},
+  	number_of_stalls: {
+  		type: 'integer'
+  	},
   	accessible: {
   		type: 'boolean',
   		defaultsTo: false

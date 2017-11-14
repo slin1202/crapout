@@ -10,12 +10,26 @@ module.exports = {
   attributes: {
   	cleanliness: {
   		type: 'float',
-  		inRange: true
+  		inRange: true,
+  		defaultsTo: 1
   	},
 
   	privacy: {
   		type: 'float',
-  		inRange: true
+  		inRange: true,
+  		defaultsTo: 1
+  	},
+
+  	amenities: {
+  		type: 'float',
+  		inRange: true,
+  		defaultsTo: 1
+  	},
+
+  	number_of_stalls: {
+  		type: 'float',
+  		inStallRange: true,
+  		defaultsTo: 0
   	},
 
   	accessible: {
@@ -40,6 +54,11 @@ module.exports = {
   		maxLength: 20
   	},
 
+  	comment: {
+  		type: 'string',
+  		defaultsTo: ''
+  	},
+
   	location: {
   		model: 'location'
   	}
@@ -50,6 +69,9 @@ module.exports = {
   types: {
   	inRange: function(value){
   		return !(value > 5 || value < 1);
+  	},
+  	inStallRange: function(value){
+  		return (value >= 0 && value < 20);
   	}
   },
 
@@ -68,6 +90,8 @@ module.exports = {
 	let reviewAccessible = values['accessible'];
 	let reviewPublic = values['public_space'];
 	let reviewCleanliness = values['cleanliness'];
+	let reviewAmenities = values['amenities'];
+	let reviewStalls = values['stalls'];
 	let reviewPrivacy = values['privacy'];
 	let reviewChangeTable = values['change_table'];
 
@@ -81,7 +105,9 @@ module.exports = {
 				cleanliness: reviewCleanliness,
 				public_space: reviewPublic,
 				privacy: reviewPrivacy,
-				change_table: reviewChangeTable
+				change_table: reviewChangeTable,
+				amenities: reviewAmenities,
+				number_of_stalls: reviewStalls
 			}).exec((err) => {
 				cb(err);
 			});
@@ -93,14 +119,18 @@ module.exports = {
 
 			var averageCleanliness = this.getAverageRating(foundLocation.reviews, values, "cleanliness");
 			var averagePrivacy = this.getAverageRating(foundLocation.reviews, values, "privacy");
+			var averageAmenities = this.getAverageRating(foundLocation.reviews, values, "amenities");
+			var averageStalls = this.getAverageRating(foundLocation.reviews, values, "number_of_stalls");
 
 			Location.update({id: place_id}, {
 				accessible: averageAccessible,
-				cleanliness: averageCleanliness,
-				privacy: averagePrivacy,
+				cleanliness: averageCleanliness.toFixed(1),
+				privacy: averagePrivacy.toFixed(1),
 				change_table: averageChangeTable,
 				public_space: averagePublic,
-				average_rating: ((averageCleanliness + averagePrivacy)/2).toFixed(1)
+				amenities: averageAmenities.toFixed(1),
+				number_of_stalls: Math.floor(averageStalls),
+				average_rating: ((averageCleanliness + averagePrivacy + averageAmenities)/3).toFixed(1)
 			}).exec((err) => {
 				cb(err);
 			});
