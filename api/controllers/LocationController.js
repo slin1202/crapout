@@ -37,8 +37,7 @@ module.exports = {
 						types: place.types,
 						open: (place.opening_hours && place.opening_hours.open_now),
 						price_level: place.price_level,
-						cleanliness: null,
-						accessible: null
+						location_exists: false
 					};
 				});
 
@@ -64,6 +63,7 @@ module.exports = {
 								let foundLocation = _.find(foundLocations, {id: place.id});
 								if(foundLocation){
 									_.assign(place, foundLocation);
+									place.location_exists = true;
 									delete place.reviews;
 								}
 							});
