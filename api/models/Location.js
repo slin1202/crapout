@@ -17,11 +17,20 @@ module.exports = {
   		type: 'float',
   		defaultsTo: 0
   	},
+  	privacy: {
+  		type: 'float',
+  		defaultsTo: 0
+  	},
   	accessible: {
   		type: 'boolean',
   		defaultsTo: false
   	},
-  	public: {
+  	public_space: {
+  		type: 'boolean',
+  		defaultsTo: false
+  	},
+
+  	change_table: {
   		type: 'boolean',
   		defaultsTo: false
   	},

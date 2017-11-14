@@ -39,8 +39,10 @@ module.exports = {
 						price_level: place.price_level,
 						images: [],
 						cleanliness: null,
+						privacy: null,
 						accessible: null,
-						public: null,
+						public_space: null,
+						change_table: null,
 						average_rating: null,
 						createdAt: null,
 						updatedAt: null
@@ -103,8 +105,10 @@ module.exports = {
 					  "reviews": [],
 					  "images": [],
 					  "cleanliness": null,
+					  "privacy": null,
 					  "accessible": null,
-					  "public": null,
+					  "public_space": null,
+					  "change_table": null,
 					  "average_rating": null,
 					  "createdAt": null,
 					  "updatedAt": null

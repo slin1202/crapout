@@ -13,12 +13,22 @@ module.exports = {
   		inRange: true
   	},
 
+  	privacy: {
+  		type: 'float',
+  		inRange: true
+  	},
+
   	accessible: {
   		type: 'boolean',
   		defaultsTo: false
   	},
 
-  	public: {
+  	public_space: {
+  		type: 'boolean',
+  		defaultsTo: false
+  	},
+
+  	change_table: {
   		type: 'boolean',
   		defaultsTo: false
   	},
@@ -43,12 +53,23 @@ module.exports = {
   	}
   },
 
+  getAverageRating: function(reviews, values, attribute){
+	var total = 0;
+	var numberOfReviews = reviews.length + 1;
+	_.forEach(reviews, (review) => {
+		total += review[attribute];
+	});
+	return (total + values[attribute])/numberOfReviews;
+  },
+
   beforeCreate: function(values, cb){
 
 	let place_id = values['location'];
 	let reviewAccessible = values['accessible'];
-	let reviewPublic = values['public'];
+	let reviewPublic = values['public_space'];
 	let reviewCleanliness = values['cleanliness'];
+	let reviewPrivacy = values['privacy'];
+	let reviewChangeTable = values['change_table'];
 
 	Location.findOne({id: place_id}).populate('reviews').exec((err, foundLocation) => {
 		if(err) cb(err);
@@ -58,24 +79,27 @@ module.exports = {
 				id: place_id,
 				accessible: reviewAccessible,
 				cleanliness: reviewCleanliness,
-				public: reviewPublic
+				public_space: reviewPublic,
+				privacy: reviewPrivacy,
+				change_table: reviewChangeTable
 			}).exec((err) => {
 				cb(err);
 			});
 		} else {
 			var numberOfReviews = foundLocation.reviews.length + 1;
 			var averageAccessible = (_.filter(foundLocation.reviews, {accessible: true}).length + (reviewAccessible ? 1 : 0)) > numberOfReviews/2;
-			var averagePublic = (_.filter(foundLocation.reviews, {public: true}).length + (reviewPublic ? 1 : 0)) > numberOfReviews/2;
+			var averagePublic = (_.filter(foundLocation.reviews, {public_space: true}).length + (reviewPublic ? 1 : 0)) > numberOfReviews/2;
+			var averageChangeTable = (_.filter(foundLocation.reviews, {change_table: true}).length + (reviewChangeTable ? 1 : 0)) > numberOfReviews/2;
 
-			var totalCleanliness = 0;
-			_.forEach(foundLocation.reviews, (review) => {
-				totalCleanliness += review.cleanliness;
-			});
-			var averageCleanliness = (totalCleanliness + reviewCleanliness)/numberOfReviews;
+			var averageCleanliness = this.getAverageRating(foundLocation.reviews, values, "cleanliness");
+			var averagePrivacy = this.getAverageRating(foundLocation.reviews, values, "privacy");
+
 			Location.update({id: place_id}, {
 				accessible: averageAccessible,
 				cleanliness: averageCleanliness,
-				public: averagePublic,
+				privacy: averagePrivacy,
+				change_table: averageChangeTable,
+				public_space: averagePublic,
 				average_rating: averageCleanliness
 			}).exec((err) => {
 				cb(err);
