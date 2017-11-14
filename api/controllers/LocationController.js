@@ -95,7 +95,13 @@ module.exports = {
 				if(!foundLocation) {
 					return res.send(_.assign({
 					  "reviews": [],
-					  "images": []
+					  "images": [],
+					  "cleanliness": null,
+					  "accessible": null,
+					  "public": null,
+					  "average_rating": null,
+					  "createdAt": null,
+					  "updatedAt": null
 					}, placeResult));
 				}
 				res.send(_.assign(foundLocation, placeResult));
