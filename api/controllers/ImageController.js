@@ -25,15 +25,19 @@ module.exports = {
     		if(!foundLocation) return res.serverError("No location was found.");
 
 		    var uploadFile = req.file('image');
-		    uploadFile.upload({ dirname: require('path').resolve(sails.config.appPath, 'assets/images') } ,function onUploadComplete(err, files) {
+		    uploadFile.upload({
+		    	adapter: require('skipper-s3'),
+		    	key: process.env.AWS_ACCESS_KEY,
+		    	secret: process.env.AWS_SECRET_KEY,
+		    	bucket: 'crapout'
+		    }, function onUploadComplete(err, files) {
 		        //	Files will be uploaded to .tmp/uploads
 
 		        if (err) return res.serverError(err);
 		        //	IF ERROR Return and send 500 error with error
+    		    let imagePath = files[0] && files[0].extra ? files[0].extra.Location : "";
 
-    		    let imagePath = files[0] && files[0].fd ? path.basename(files[0].fd) : "";
-    		    let relativePath = sails.getBaseurl() + '/images/';
-		        Image.create({location: req.param('location_id'), image_path: relativePath + imagePath }).exec((err, createdImage) => {
+		        Image.create({location: req.param('location_id'), image_path: imagePath }).exec((err, createdImage) => {
 		        	if(err) return res.serverError(err);
 		        	res.send(createdImage);
 		        });
