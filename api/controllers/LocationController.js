@@ -93,7 +93,7 @@ module.exports = {
 					price_level: place.price_level
 				};
 				if(!foundLocation) {
-					res.send(_.assign({
+					return res.send(_.assign({
 					  "reviews": [],
 					  "images": []
 					}, placeResult));
