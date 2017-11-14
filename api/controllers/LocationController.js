@@ -37,7 +37,13 @@ module.exports = {
 						types: place.types,
 						open: (place.opening_hours && place.opening_hours.open_now),
 						price_level: place.price_level,
-						location_exists: false
+						images: [],
+						cleanliness: null,
+						accessible: null,
+						public: null,
+						average_rating: null,
+						createdAt: null,
+						updatedAt: null
 					};
 				});
 
