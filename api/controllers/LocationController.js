@@ -75,11 +75,39 @@ module.exports = {
 		});
 	},
 
+	findOne: function(req, res){
+		if(!req.param('id')) return res.serverError("No location id was sent");
+
+		googleMapsClient.place({placeid: req.param('id')}, (err, placeResponse) => {
+			if(err) return res.serverError(err);
+
+			Location.findOne({id: req.param('id')}).populate('reviews').populate('images').exec((err, foundLocation) => {
+				if(err) return res.serverError(err);
+				let place = placeResponse.json.result;
+				let placeResult = {
+					name: place.name,
+					coordinates: place.geometry.location,
+					id: place.place_id,
+					types: place.types,
+					open: (place.opening_hours && place.opening_hours.open_now),
+					price_level: place.price_level
+				};
+				if(!foundLocation) {
+					res.send(_.assign({
+					  "reviews": [],
+					  "images": []
+					}, placeResult));
+				}
+				res.send(_.assign(foundLocation, placeResult));
+			});
+		});
+	},
+
 	reviews: function(req, res){
 		if(!req.param('location_id')) return res.serverError("No location id was sent");
 		Location.findOne({id: req.param('location_id')}).populate('reviews').exec((err, foundLocation) => {
 			if(err) return res.serverError(err);
-			if(!foundLocation) return res.notFound("Location not found.");
+			if(!foundLocation) return res.send([]);
 			res.send(foundLocation.reviews);
 		});
 	},
@@ -88,7 +116,7 @@ module.exports = {
 		if(!req.param('location_id')) return res.serverError("No location id was sent");
 		Location.findOne({id: req.param('location_id')}).populate('images').exec((err, foundLocation) => {
 			if(err) return res.serverError(err);
-			if(!foundLocation) return res.notFound("Location not found.");
+			if(!foundLocation) return res.send([]);
 			res.send(foundLocation.images);
 		});
 	}
