@@ -25,7 +25,8 @@ module.exports = {
 			{
 				language: 'en',
       		 	location: location,
-      			radius: 1000
+      			rankby: "distance",
+      			type: "food"
       		}, function(err, googleResponse){
       			if(err) return res.serverError(err);
 
