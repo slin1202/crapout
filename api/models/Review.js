@@ -61,7 +61,7 @@ module.exports = {
 
   types: {
   	inRange: function(value){
-  		return !(value > 5 || value < 1) || (value == null);
+  		return (value >= 0 && value <=5)|| (value == null);
   	},
   	inStallRange: function(value){
   		return (value >= 0 && value < 20) || (value == null);
@@ -100,6 +100,10 @@ module.exports = {
   },
 
   beforeCreate: function(values, cb){
+
+  	if(values["amenities"] == 0) values["amenities"] = null;
+  	if(values["cleanliness"] == 0) values["cleanliness"] = null;
+  	if(values["privacy"] == 0) values["privacy"] = null;
 
 	let place_id = values['location'];
 	let reviewAccessible = values['accessible'];
